@@ -15,6 +15,6 @@ public interface TestService {
 
 	void save(TestDTO testDTO);
 
-	void updateTest(TestDTO testDTO);
+	void updateTest(Long testId, TestDTO testDTO);
 
 }
