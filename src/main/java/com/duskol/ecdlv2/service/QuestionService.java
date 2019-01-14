@@ -3,6 +3,7 @@ package com.duskol.ecdlv2.service;
 import java.util.List;
 
 import com.duskol.ecdlv2.dto.QuestionDTO;
+import com.duskol.ecdlv2.exception.ResourceNotFoundException;
 
 /**
  * 
@@ -11,6 +12,6 @@ import com.duskol.ecdlv2.dto.QuestionDTO;
  */
 public interface QuestionService {
 
-	List<QuestionDTO> getAllQuestions(Long testId);
+	List<QuestionDTO> getAllQuestions(Long testId) throws ResourceNotFoundException;
 
 }
