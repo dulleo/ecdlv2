@@ -6,6 +6,8 @@ import com.duskol.ecdlv2.dto.TestDTO;
 
 public interface TestService {
 
-	List<TestDTO> getTests();
+	List<TestDTO> getAll();
+
+	void save(TestDTO testDTO);
 
 }
