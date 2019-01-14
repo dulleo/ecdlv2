@@ -40,7 +40,7 @@ public class TestController {
 	
 	@PutMapping("/tests/{testId}")
 	public void updateTest(@PathVariable Long testId, @Valid @RequestBody TestDTO testDTO) {
-		testService.updateTest(testDTO);
+		testService.updateTest(testId,testDTO);
 	}
 
 	
