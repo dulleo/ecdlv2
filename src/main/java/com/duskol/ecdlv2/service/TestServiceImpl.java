@@ -15,7 +15,7 @@ import com.duskol.ecdlv2.dto.TestDTO;
 import com.duskol.ecdlv2.entity.Test;
 import com.duskol.ecdlv2.error.ErrorCodes;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
-import com.duskol.ecdlv2.repository.TestRepository;
+import com.duskol.ecdlv2.repository.RepositoryContainer;
 
 /**
  * 
@@ -27,7 +27,7 @@ import com.duskol.ecdlv2.repository.TestRepository;
 public class TestServiceImpl implements TestService {
 
 	@Autowired
-	private TestRepository testRepository;
+	private RepositoryContainer repositoryContainer;
 	
 	@Autowired
 	private EntityToDtoConverter entityToDtoConverter; 
@@ -39,7 +39,7 @@ public class TestServiceImpl implements TestService {
 	@Override
 	public List<TestDTO> getAll() {
 		
-		List<Test> tests = testRepository.findAll();
+		List<Test> tests = repositoryContainer.getTestRepository().findAll();
 		
 		List<TestDTO> testDTOs = new ArrayList<>();
 		
@@ -61,7 +61,7 @@ public class TestServiceImpl implements TestService {
 	public void save(TestDTO testDTO) {
 		Test test = new Test();
 		dtoToEntityConverter.convert(testDTO, test);
-		testRepository.save(test);
+		repositoryContainer.getTestRepository().save(test);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class TestServiceImpl implements TestService {
 		
 		Test test = testOptional.get();
 		dtoToEntityConverter.convert(testDTO, test);
-		testRepository.save(test);
+		repositoryContainer.getTestRepository().save(test);
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class TestServiceImpl implements TestService {
 	@Override
 	public void delete(Long testId) throws ResourceNotFoundException {
 		Optional<Test> testOptional = getOptionalTest(testId);
-		testRepository.delete(testOptional.get());
+		repositoryContainer.getTestRepository().delete(testOptional.get());
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public class TestServiceImpl implements TestService {
 	 * @throws ResourceNotFoundException
 	 */
 	private Optional<Test> getOptionalTest(Long testId) throws ResourceNotFoundException {
-		Optional<Test> testOptional = testRepository.findById(testId);
+		Optional<Test> testOptional = repositoryContainer.getTestRepository().findById(testId);
 		
 		if(!testOptional.isPresent()) {
 			throw new ResourceNotFoundException(getErrorMessage(testId), ErrorCodes.TEST_NOT_FOUND);
