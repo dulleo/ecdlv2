@@ -74,6 +74,10 @@ public class TestServiceImpl implements TestService {
 			throw new ResourceNotFoundException(getErrorMessage(testId), ErrorCodes.TEST_NOT_FOUND);
 		}
 		
+		Test test = testOptional.get();
+		dtoToEntityConverter.convert(testDTO, test);
+		testRepository.save(test);
+		
 	}
 	
 	/**
