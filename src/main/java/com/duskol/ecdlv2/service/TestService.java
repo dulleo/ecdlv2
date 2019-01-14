@@ -16,6 +16,6 @@ public interface TestService {
 
 	void save(TestDTO testDTO);
 
-	void updateTest(Long testId, TestDTO testDTO) throws ResourceNotFoundException;
+	void update(Long testId, TestDTO testDTO) throws ResourceNotFoundException;
 
 }
