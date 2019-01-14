@@ -22,6 +22,7 @@ public class TestServiceImpl implements TestService {
 	@Autowired
 	private TestRepository testRepository;
 	
+	@Autowired
 	private EntityToDtoConverter entityToDtoConverter; 
 	
 	
