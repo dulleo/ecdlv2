@@ -2,8 +2,6 @@ package com.duskol.ecdlv2.service;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import com.duskol.ecdlv2.dto.QuestionDTO;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
 
@@ -16,6 +14,6 @@ public interface QuestionService {
 
 	List<QuestionDTO> getAllQuestions(Long testId) throws ResourceNotFoundException;
 
-	void createQuestion(Long testId, QuestionDTO questionDTO);
+	void createQuestion(Long testId, QuestionDTO questionDTO) throws ResourceNotFoundException;
 
 }
