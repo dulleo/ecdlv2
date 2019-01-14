@@ -2,6 +2,7 @@ package com.duskol.ecdlv2.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,8 @@ import com.duskol.ecdlv2.converter.DtoToEntityConverter;
 import com.duskol.ecdlv2.converter.EntityToDtoConverter;
 import com.duskol.ecdlv2.dto.TestDTO;
 import com.duskol.ecdlv2.entity.Test;
+import com.duskol.ecdlv2.error.ErrorCodes;
+import com.duskol.ecdlv2.exception.ResourceNotFoundException;
 import com.duskol.ecdlv2.repository.TestRepository;
 
 /**
@@ -56,5 +59,29 @@ public class TestServiceImpl implements TestService {
 		Test test = new Test();
 		dtoToEntityConverter.convert(testDTO, test);
 		testRepository.save(test);
+	}
+
+	/**
+	 * This method updates test
+	 * @throws ResourceNotFoundException 
+	 */
+	@Override
+	public void update(Long testId, TestDTO testDTO) throws ResourceNotFoundException {
+		
+		Optional<Test> testOptional = testRepository.findById(testId);
+		
+		if(!testOptional.isPresent()) {
+			throw new ResourceNotFoundException(getErrorMessage(testId), ErrorCodes.TEST_NOT_FOUND);
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private String getErrorMessage(Long id) {
+		return "Test id: " + id + " not found!";
 	}
 }
