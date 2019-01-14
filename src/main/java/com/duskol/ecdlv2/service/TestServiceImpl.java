@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.duskol.ecdlv2.converter.DtoToEntityConverter;
 import com.duskol.ecdlv2.converter.EntityToDtoConverter;
 import com.duskol.ecdlv2.dto.TestDTO;
 import com.duskol.ecdlv2.entity.Test;
@@ -25,9 +26,12 @@ public class TestServiceImpl implements TestService {
 	@Autowired
 	private EntityToDtoConverter entityToDtoConverter; 
 	
+	@Autowired
+	private DtoToEntityConverter dtoToEntityConverter; 
+	
 	
 	@Override
-	public List<TestDTO> getTests() {
+	public List<TestDTO> getAll() {
 		
 		List<Test> tests = testRepository.findAll();
 		
@@ -42,6 +46,16 @@ public class TestServiceImpl implements TestService {
 		}
 	
 		return testDTOs;
+	}
+
+	/**
+	 * This method creates a test
+	 */
+	@Override
+	public void save(TestDTO testDTO) {
+		Test test = new Test();
+		dtoToEntityConverter.convert(testDTO, test);
+		testRepository.save(test);
 	}
 
 }
