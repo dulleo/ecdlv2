@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 /**
  * 
@@ -22,6 +23,10 @@ public class Answer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@NotBlank
+	@Column(name="text")
+	private String text;
 	
 	@Column(name="correct")
 	private Boolean isCorrect;
@@ -54,8 +59,16 @@ public class Answer {
 		this.question = question;
 	}
 
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
 	@Override
 	public String toString() {
-		return "Answer [id=" + id + ", isCorrect=" + isCorrect + ", question=" + question + "]";
+		return "Answer [id=" + id + ", text=" + text + ", isCorrect=" + isCorrect + ", question=" + question + "]";
 	}
 }
