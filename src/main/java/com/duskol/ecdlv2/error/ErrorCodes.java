@@ -1,5 +1,10 @@
 package com.duskol.ecdlv2.error;
 
+/**
+ * 
+ * Cretaed Jan 14, 2019 by duskol
+ *
+ */
 public enum ErrorCodes {
 
 	TEST_NOT_FOUND(1),
