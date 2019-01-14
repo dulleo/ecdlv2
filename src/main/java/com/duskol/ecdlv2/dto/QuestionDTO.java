@@ -18,6 +18,7 @@ public class QuestionDTO implements Serializable {
 	private String text;
 	private QuestionType type;
 	private List<AnswerDTO> answers;
+	
 	public Long getId() {
 		return id;
 	}
