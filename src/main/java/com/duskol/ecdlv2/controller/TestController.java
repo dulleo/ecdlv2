@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.duskol.ecdlv2.dto.TestDTO;
+import com.duskol.ecdlv2.exception.ResourceNotFoundException;
 import com.duskol.ecdlv2.service.TestService;
 
 /**
@@ -39,7 +40,7 @@ public class TestController {
 	}
 	
 	@PutMapping("/tests/{testId}")
-	public void updateTest(@PathVariable Long testId, @Valid @RequestBody TestDTO testDTO) {
+	public void updateTest(@PathVariable Long testId, @Valid @RequestBody TestDTO testDTO) throws ResourceNotFoundException {
 		testService.updateTest(testId,testDTO);
 	}
 
