@@ -15,4 +15,6 @@ public interface TestService {
 
 	void save(TestDTO testDTO);
 
+	void updateTest(TestDTO testDTO);
+
 }
