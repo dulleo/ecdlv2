@@ -6,7 +6,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +36,11 @@ public class TestController {
 	@PostMapping("/tests")
 	public void createTest(@Valid @RequestBody TestDTO testDTO) {
 		testService.save(testDTO);
+	}
+	
+	@PutMapping("/tests/{testId}")
+	public void updateTest(@PathVariable Long testId, @Valid @RequestBody TestDTO testDTO) {
+		testService.updateTest(testDTO);
 	}
 
 	
