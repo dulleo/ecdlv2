@@ -18,4 +18,6 @@ public interface TestService {
 
 	void update(Long testId, TestDTO testDTO) throws ResourceNotFoundException;
 
+	void delete(Long testId);
+
 }
