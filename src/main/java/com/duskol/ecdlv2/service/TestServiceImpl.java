@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ import com.duskol.ecdlv2.repository.TestRepository;
  *
  */
 @Service
+@Transactional
 public class TestServiceImpl implements TestService {
 
 	@Autowired
@@ -68,16 +71,36 @@ public class TestServiceImpl implements TestService {
 	@Override
 	public void update(Long testId, TestDTO testDTO) throws ResourceNotFoundException {
 		
+		Optional<Test> testOptional = getOptionalTest(testId);
+		
+		Test test = testOptional.get();
+		dtoToEntityConverter.convert(testDTO, test);
+		testRepository.save(test);
+	}
+
+	/**
+	 * This method deletes a test
+	 * @throws ResourceNotFoundException 
+	 */
+	@Override
+	public void delete(Long testId) throws ResourceNotFoundException {
+		Optional<Test> testOptional = getOptionalTest(testId);
+		testRepository.delete(testOptional.get());
+	}
+	
+	/**
+	 * 
+	 * @param testId
+	 * @return
+	 * @throws ResourceNotFoundException
+	 */
+	private Optional<Test> getOptionalTest(Long testId) throws ResourceNotFoundException {
 		Optional<Test> testOptional = testRepository.findById(testId);
 		
 		if(!testOptional.isPresent()) {
 			throw new ResourceNotFoundException(getErrorMessage(testId), ErrorCodes.TEST_NOT_FOUND);
 		}
-		
-		Test test = testOptional.get();
-		dtoToEntityConverter.convert(testDTO, test);
-		testRepository.save(test);
-		
+		return testOptional;
 	}
 	
 	/**
