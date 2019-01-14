@@ -24,7 +24,7 @@ import com.duskol.ecdlv2.service.TestService;
  *
  */
 @RestController
-@RequestMapping(value="/ecdlv2")
+@RequestMapping(value="/ecdl")
 public class TestController {
 	
 	@Autowired
