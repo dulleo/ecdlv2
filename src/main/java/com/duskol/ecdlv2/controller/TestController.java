@@ -46,7 +46,7 @@ public class TestController {
 	}
 	
 	@DeleteMapping("/tests/{testId}")
-	public void deleteTest(@PathVariable Long testId) {
+	public void deleteTest(@PathVariable Long testId) throws ResourceNotFoundException {
 		testService.delete(testId);
 	}
 
