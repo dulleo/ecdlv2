@@ -41,7 +41,7 @@ public class TestController {
 	
 	@PutMapping("/tests/{testId}")
 	public void updateTest(@PathVariable Long testId, @Valid @RequestBody TestDTO testDTO) throws ResourceNotFoundException {
-		testService.updateTest(testId,testDTO);
+		testService.update(testId,testDTO);
 	}
 
 	
