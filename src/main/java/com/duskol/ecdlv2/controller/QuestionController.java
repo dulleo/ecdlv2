@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +43,11 @@ public class QuestionController {
 	@PutMapping("/{testId}/questions/{questionId}")
 	public void updateQuestion(@PathVariable Long testId, @PathVariable Long questionId, @Valid @RequestBody QuestionDTO questionDTO) throws ResourceNotFoundException {
 		questionService.update(testId, questionId, questionDTO);
+	}
+	
+	@DeleteMapping("/{testId}/questions/{questionId}")
+	public void deleteQuestion(@PathVariable Long testId, @PathVariable Long questionId) throws ResourceNotFoundException {
+		questionService.delete(testId, questionId);
 	}
 
 }
