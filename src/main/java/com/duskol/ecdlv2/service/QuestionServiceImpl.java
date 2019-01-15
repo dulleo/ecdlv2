@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 
 import com.duskol.ecdlv2.converter.DtoToEntityConverter;
 import com.duskol.ecdlv2.converter.EntityToDtoConverter;
+import com.duskol.ecdlv2.dto.AnswerDTO;
 import com.duskol.ecdlv2.dto.QuestionDTO;
 import com.duskol.ecdlv2.entity.Answer;
 import com.duskol.ecdlv2.entity.Question;
 import com.duskol.ecdlv2.entity.Test;
-import com.duskol.ecdlv2.error.ErrorCodes;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
 import com.duskol.ecdlv2.repository.RepositoryContainer;
 
@@ -55,6 +55,22 @@ public class QuestionServiceImpl implements QuestionService {
 		return questionDTOs;
 	}
 	
+	@Override
+	public QuestionDTO getQuestion(Long testId, Long questionId) throws ResourceNotFoundException {
+		
+		Question question = repositoryContainer.getQuestionRepository().findByIdAndTestId();
+		
+		if(question == null) {
+			throw new ResourceNotFoundException("Question not found with id " + questionId + " and testId " + testId);
+		}
+		
+		QuestionDTO questionDTO = new QuestionDTO();
+		entityToDtoConverter.convert(question, questionDTO);
+		setAnswerDTO(question, questionDTO);
+		
+		return questionDTO;
+	}
+
 	@Override
 	public void create(Long testId, QuestionDTO questionDTO) throws ResourceNotFoundException {
 		Test test = getTest(testId);
@@ -107,6 +123,24 @@ public class QuestionServiceImpl implements QuestionService {
 	
 	/**
 	 * 
+	 * @param question
+	 * @param questionDTO
+	 */
+	private void setAnswerDTO(Question question, QuestionDTO questionDTO) {
+		
+		List<AnswerDTO> answerDTOs = new ArrayList<>();
+		
+		question.getAnswers().stream().forEach(answer-> {
+			AnswerDTO answerDTO = new AnswerDTO();
+			entityToDtoConverter.convert(answer, answerDTO);
+			answerDTOs.add(answerDTO);
+		});
+		
+		questionDTO.setAnswers(answerDTOs);
+	}
+	
+	/**
+	 * 
 	 * @param testId
 	 * @return
 	 * @throws ResourceNotFoundException
@@ -115,7 +149,7 @@ public class QuestionServiceImpl implements QuestionService {
 		Optional<Test> testOptional = repositoryContainer.getTestRepository().findById(testId);
 		
 		if(!testOptional.isPresent()) {
-			throw new ResourceNotFoundException(getErrorMessage(testId), ErrorCodes.TEST_NOT_FOUND);
+			throw new ResourceNotFoundException(getErrorMessage(testId));
 		}
 		return testOptional.get();
 	}
@@ -130,7 +164,7 @@ public class QuestionServiceImpl implements QuestionService {
 		Optional<Question> questionOptional = repositoryContainer.getQuestionRepository().findById(questionId);
 		
 		if(!questionOptional.isPresent()) {
-			throw new ResourceNotFoundException(getErrorMessage(questionId), ErrorCodes.QUESTION_NOT_FOUND);
+			throw new ResourceNotFoundException(getErrorMessage(questionId));
 		}
 		return questionOptional.get();
 	}
