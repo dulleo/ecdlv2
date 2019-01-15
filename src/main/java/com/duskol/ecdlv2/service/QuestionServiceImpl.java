@@ -58,7 +58,7 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	public QuestionDTO getQuestion(Long testId, Long questionId) throws ResourceNotFoundException {
 		
-		Question question = repositoryContainer.getQuestionRepository().findByIdAndTestId();
+		Question question = repositoryContainer.getQuestionRepository().findByIdAndTestId(testId, questionId);
 		
 		if(question == null) {
 			throw new ResourceNotFoundException("Question not found with id " + questionId + " and testId " + testId);
@@ -94,7 +94,7 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	public void delete(Long testId, Long questionId) throws ResourceNotFoundException {
 		
-		Question question = repositoryContainer.getQuestionRepository().findByIdAndTestId();
+		Question question = repositoryContainer.getQuestionRepository().findByIdAndTestId(testId, questionId);
 		
 		if(question == null) {
 			throw new ResourceNotFoundException("Question not found with id " + questionId + " and testId " + testId);
