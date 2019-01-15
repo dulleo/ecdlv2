@@ -16,9 +16,6 @@ public class RepositoryContainer {
 	
 	@Autowired
 	QuestionRepository questionRepository;
-	
-	@Autowired
-	AnswerRepository answerRepository;
 
 	public TestRepository getTestRepository() {
 		return testRepository;
@@ -26,9 +23,5 @@ public class RepositoryContainer {
 
 	public QuestionRepository getQuestionRepository() {
 		return questionRepository;
-	}
-
-	public AnswerRepository getAnswerRepository() {
-		return answerRepository;
 	}
 }
