@@ -35,6 +35,11 @@ public class QuestionController {
 		return questionService.getAllQuestions(testId);
 	}
 	
+	@GetMapping("/{testId}/questions/{questionId}")
+	public QuestionDTO getQuestion(@PathVariable Long testId, @PathVariable Long questionId) throws ResourceNotFoundException {
+		return questionService.getQuestion(testId, questionId);
+	}
+	
 	@PostMapping("/{testId}/questions")
 	public void createQuestion(@PathVariable Long testId, @Valid @RequestBody QuestionDTO questionDTO) throws ResourceNotFoundException {
 		questionService.create(testId, questionDTO);
@@ -49,5 +54,4 @@ public class QuestionController {
 	public void deleteQuestion(@PathVariable Long testId, @PathVariable Long questionId) throws ResourceNotFoundException {
 		questionService.delete(testId, questionId);
 	}
-
 }
