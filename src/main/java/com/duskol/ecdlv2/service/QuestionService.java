@@ -20,4 +20,6 @@ public interface QuestionService {
 
 	void delete(Long testId, Long questionId) throws ResourceNotFoundException;
 
+	QuestionDTO getQuestion(Long testId, Long questionId) throws ResourceNotFoundException;
+
 }
