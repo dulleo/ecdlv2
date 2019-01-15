@@ -18,6 +18,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.duskol.ecdlv2.common.QuestionType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -44,7 +47,7 @@ public class Question {
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "test_id", nullable = false)
-	//@OnDelete(action = OnDeleteAction.CASCADE) da li ovo koristiti????
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JsonIgnore 
 	private Test test;
 	
