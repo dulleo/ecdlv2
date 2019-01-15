@@ -14,6 +14,8 @@ public interface QuestionService {
 
 	List<QuestionDTO> getAllQuestions(Long testId) throws ResourceNotFoundException;
 
-	void createQuestion(Long testId, QuestionDTO questionDTO) throws ResourceNotFoundException;
+	void create(Long testId, QuestionDTO questionDTO) throws ResourceNotFoundException;
+
+	void update(Long testId, Long questionId, QuestionDTO questionDTO);
 
 }
