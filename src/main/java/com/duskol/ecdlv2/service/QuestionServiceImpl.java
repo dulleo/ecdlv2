@@ -40,8 +40,8 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	public List<QuestionDTO> getAllQuestions(Long testId) throws ResourceNotFoundException {
 		
-		Optional<Test> testOptional = getOptionalTest(testId);
-		List<Question> questions = repositoryContainer.getQuestionRepository().findByTestId(testOptional.get().getId());
+		Test test = getTest(testId);
+		List<Question> questions = repositoryContainer.getQuestionRepository().findByTestId(test.getId());
 		
 		List<QuestionDTO> questionDTOs = new ArrayList<>();
 		
@@ -57,16 +57,24 @@ public class QuestionServiceImpl implements QuestionService {
 	
 	@Override
 	public void create(Long testId, QuestionDTO questionDTO) throws ResourceNotFoundException {
-		Optional<Test> testOptional = getOptionalTest(testId);
-		
+		Test test = getTest(testId);
 		Question question = new Question();
 		dtoToEntityConverter.convert(questionDTO, question);
-		question.setTest(testOptional.get());
+		question.setTest(test);
 		setAnswers(questionDTO, question);
-		
 		repositoryContainer.getQuestionRepository().save(question);
 	}
 
+	@Override
+	public void update(Long testId, Long questionId, QuestionDTO questionDTO) throws ResourceNotFoundException {
+		Test test = getTest(testId);
+		Question question = getQuestion(questionId);
+		dtoToEntityConverter.convert(questionDTO, question);
+		question.setTest(test);
+		setAnswers(questionDTO, question);
+		repositoryContainer.getQuestionRepository().save(question);
+	}
+	
 	/**
 	 * Set question answers
 	 * @param questionDTO
@@ -91,13 +99,28 @@ public class QuestionServiceImpl implements QuestionService {
 	 * @return
 	 * @throws ResourceNotFoundException
 	 */
-	private Optional<Test> getOptionalTest(Long testId) throws ResourceNotFoundException {
+	private Test getTest(Long testId) throws ResourceNotFoundException {
 		Optional<Test> testOptional = repositoryContainer.getTestRepository().findById(testId);
 		
 		if(!testOptional.isPresent()) {
 			throw new ResourceNotFoundException(getErrorMessage(testId), ErrorCodes.TEST_NOT_FOUND);
 		}
-		return testOptional;
+		return testOptional.get();
+	}
+	
+	/**
+	 * 
+	 * @param questionId
+	 * @return
+	 * @throws ResourceNotFoundException
+	 */
+	private Question getQuestion(Long questionId) throws ResourceNotFoundException {
+		Optional<Question> questionOptional = repositoryContainer.getQuestionRepository().findById(questionId);
+		
+		if(!questionOptional.isPresent()) {
+			throw new ResourceNotFoundException(getErrorMessage(questionId), ErrorCodes.QUESTION_NOT_FOUND);
+		}
+		return questionOptional.get();
 	}
 	
 	/**
