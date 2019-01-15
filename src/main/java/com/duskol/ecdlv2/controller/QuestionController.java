@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,7 +36,12 @@ public class QuestionController {
 	
 	@PostMapping("/{testId}/questions")
 	public void createQuestion(@PathVariable Long testId, @Valid @RequestBody QuestionDTO questionDTO) throws ResourceNotFoundException {
-		questionService.createQuestion(testId, questionDTO);
+		questionService.create(testId, questionDTO);
+	}
+	
+	@PutMapping("/{testId}/questions/{questionId}")
+	public void updateQuestion(@PathVariable Long testId, @PathVariable Long questionId, @Valid @RequestBody QuestionDTO questionDTO) {
+		questionService.update(testId, questionId, questionDTO);
 	}
 
 }
