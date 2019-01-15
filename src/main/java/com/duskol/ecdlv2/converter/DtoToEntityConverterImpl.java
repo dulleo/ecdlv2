@@ -2,8 +2,10 @@ package com.duskol.ecdlv2.converter;
 
 import org.springframework.stereotype.Component;
 
+import com.duskol.ecdlv2.dto.AnswerDTO;
 import com.duskol.ecdlv2.dto.QuestionDTO;
 import com.duskol.ecdlv2.dto.TestDTO;
+import com.duskol.ecdlv2.entity.Answer;
 import com.duskol.ecdlv2.entity.Question;
 import com.duskol.ecdlv2.entity.Test;
 
@@ -25,6 +27,12 @@ public class DtoToEntityConverterImpl implements DtoToEntityConverter {
 	public void convert(QuestionDTO questionDTO, Question question) {
 		question.setText(questionDTO.getText());
 		question.setType(questionDTO.getType());
+	}
+
+	@Override
+	public void convert(AnswerDTO answerDTO, Answer answer) {
+		answer.setIsCorrect(answerDTO.getIsCorrect());
+		answer.setText(answerDTO.getText());
 	}
 
 }
