@@ -17,6 +17,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
 	List<Question> findByTestId(Long testId);
 
-	Question findByIdAndTestId();
+	Question findByIdAndTestId(Long testId, Long questionId);
 
 }
