@@ -40,7 +40,7 @@ public class QuestionController {
 	}
 	
 	@PutMapping("/{testId}/questions/{questionId}")
-	public void updateQuestion(@PathVariable Long testId, @PathVariable Long questionId, @Valid @RequestBody QuestionDTO questionDTO) {
+	public void updateQuestion(@PathVariable Long testId, @PathVariable Long questionId, @Valid @RequestBody QuestionDTO questionDTO) throws ResourceNotFoundException {
 		questionService.update(testId, questionId, questionDTO);
 	}
 
