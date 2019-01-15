@@ -18,4 +18,6 @@ public interface QuestionService {
 
 	void update(Long testId, Long questionId, QuestionDTO questionDTO) throws ResourceNotFoundException;
 
+	void delete(Long testId, Long questionId) throws ResourceNotFoundException;
+
 }
