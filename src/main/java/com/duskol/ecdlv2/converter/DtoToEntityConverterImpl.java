@@ -25,12 +25,18 @@ public class DtoToEntityConverterImpl implements DtoToEntityConverter {
 
 	@Override
 	public void convert(QuestionDTO questionDTO, Question question) {
+		if(questionDTO.getId() != null) {
+			question.setId(questionDTO.getId());
+		}
 		question.setText(questionDTO.getText());
 		question.setType(questionDTO.getType());
 	}
 
 	@Override
 	public void convert(AnswerDTO answerDTO, Answer answer) {
+		if(answerDTO.getId() != null) {
+			answer.setId(answerDTO.getId());
+		}
 		answer.setIsCorrect(answerDTO.getIsCorrect());
 		answer.setText(answerDTO.getText());
 	}
