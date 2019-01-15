@@ -56,7 +56,7 @@ public class QuestionServiceImpl implements QuestionService {
 	}
 	
 	@Override
-	public void createQuestion(Long testId, QuestionDTO questionDTO) throws ResourceNotFoundException {
+	public void create(Long testId, QuestionDTO questionDTO) throws ResourceNotFoundException {
 		Optional<Test> testOptional = getOptionalTest(testId);
 		
 		Question question = new Question();
