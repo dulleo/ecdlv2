@@ -75,6 +75,18 @@ public class QuestionServiceImpl implements QuestionService {
 		repositoryContainer.getQuestionRepository().save(question);
 	}
 	
+	@Override
+	public void delete(Long testId, Long questionId) throws ResourceNotFoundException {
+		
+		Question question = repositoryContainer.getQuestionRepository().findByIdAndTestId();
+		
+		if(question == null) {
+			throw new ResourceNotFoundException("Question not found with id " + questionId + " and testId " + testId);
+		}
+		
+		repositoryContainer.getQuestionRepository().delete(question);
+	}
+	
 	/**
 	 * Set question answers
 	 * @param questionDTO
