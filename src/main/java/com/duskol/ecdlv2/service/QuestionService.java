@@ -2,7 +2,6 @@ package com.duskol.ecdlv2.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -16,6 +15,7 @@ import com.duskol.ecdlv2.dto.QuestionDTO;
 import com.duskol.ecdlv2.entity.Answer;
 import com.duskol.ecdlv2.entity.Question;
 import com.duskol.ecdlv2.entity.Test;
+import com.duskol.ecdlv2.entity.provider.EntityProviderInterface;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
 import com.duskol.ecdlv2.repository.RepositoryContainer;
 
@@ -26,7 +26,7 @@ import com.duskol.ecdlv2.repository.RepositoryContainer;
  */
 @Service
 @Transactional
-public class QuestionServiceImpl implements QuestionService {
+public class QuestionService implements QuestionServiceInterface {
 	
 	@Autowired
 	private RepositoryContainer repositoryContainer;
@@ -35,12 +35,15 @@ public class QuestionServiceImpl implements QuestionService {
 	private EntityToDtoConverter entityToDtoConverter; 
 	
 	@Autowired
-	private DtoToEntityConverter dtoToEntityConverter; 
+	private DtoToEntityConverter dtoToEntityConverter;
+	
+	@Autowired
+	private EntityProviderInterface entityProvider;
 
 	@Override
 	public List<QuestionDTO> getAllQuestions(Long testId) throws ResourceNotFoundException {
 		
-		Test test = getTest(testId);
+		Test test = entityProvider.getTest(testId);
 		List<Question> questions = repositoryContainer.getQuestionRepository().findByTestId(test.getId());
 		
 		List<QuestionDTO> questionDTOs = new ArrayList<>();
@@ -58,22 +61,19 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	public QuestionDTO getQuestion(Long testId, Long questionId) throws ResourceNotFoundException {
 		
-		Question question = repositoryContainer.getQuestionRepository().findByIdAndTestId(testId, questionId);
-		
-		if(question == null) {
-			throw new ResourceNotFoundException("Question not found with id " + questionId + " and testId " + testId);
-		}
+		Question question = entityProvider.getQuestion(testId, questionId);
 		
 		QuestionDTO questionDTO = new QuestionDTO();
 		entityToDtoConverter.convert(question, questionDTO);
-		setAnswerDTO(question, questionDTO);
+		setAnswerDTOs(question, questionDTO);
 		
 		return questionDTO;
 	}
 
 	@Override
 	public void create(Long testId, QuestionDTO questionDTO) throws ResourceNotFoundException {
-		Test test = getTest(testId);
+		
+		Test test = entityProvider.getTest(testId);
 		Question question = new Question();
 		dtoToEntityConverter.convert(questionDTO, question);
 		question.setTest(test);
@@ -83,23 +83,25 @@ public class QuestionServiceImpl implements QuestionService {
 
 	@Override
 	public void update(Long testId, Long questionId, QuestionDTO questionDTO) throws ResourceNotFoundException {
-		Test test = getTest(testId);
-		Question question = getQuestion(questionId);
+		
+		Question question = entityProvider.getQuestion(testId, questionId);
+		
 		dtoToEntityConverter.convert(questionDTO, question);
-		question.setTest(test);
 		setAnswers(questionDTO, question);
 		repositoryContainer.getQuestionRepository().save(question);
 	}
 	
 	@Override
+	public void deleteAllQuestionsForTest(Long testId) {
+		
+		List<Question> questions = repositoryContainer.getQuestionRepository().findByTestId(testId);
+		repositoryContainer.getQuestionRepository().deleteAll(questions);
+	}
+	
+	@Override
 	public void delete(Long testId, Long questionId) throws ResourceNotFoundException {
 		
-		Question question = repositoryContainer.getQuestionRepository().findByIdAndTestId(testId, questionId);
-		
-		if(question == null) {
-			throw new ResourceNotFoundException("Question not found with id " + questionId + " and testId " + testId);
-		}
-		
+		Question question = entityProvider.getQuestion(testId, questionId);
 		repositoryContainer.getQuestionRepository().delete(question);
 	}
 	
@@ -126,7 +128,7 @@ public class QuestionServiceImpl implements QuestionService {
 	 * @param question
 	 * @param questionDTO
 	 */
-	private void setAnswerDTO(Question question, QuestionDTO questionDTO) {
+	private void setAnswerDTOs(Question question, QuestionDTO questionDTO) {
 		
 		List<AnswerDTO> answerDTOs = new ArrayList<>();
 		
@@ -137,44 +139,5 @@ public class QuestionServiceImpl implements QuestionService {
 		});
 		
 		questionDTO.setAnswers(answerDTOs);
-	}
-	
-	/**
-	 * 
-	 * @param testId
-	 * @return
-	 * @throws ResourceNotFoundException
-	 */
-	private Test getTest(Long testId) throws ResourceNotFoundException {
-		Optional<Test> testOptional = repositoryContainer.getTestRepository().findById(testId);
-		
-		if(!testOptional.isPresent()) {
-			throw new ResourceNotFoundException(getErrorMessage(testId));
-		}
-		return testOptional.get();
-	}
-	
-	/**
-	 * 
-	 * @param questionId
-	 * @return
-	 * @throws ResourceNotFoundException
-	 */
-	private Question getQuestion(Long questionId) throws ResourceNotFoundException {
-		Optional<Question> questionOptional = repositoryContainer.getQuestionRepository().findById(questionId);
-		
-		if(!questionOptional.isPresent()) {
-			throw new ResourceNotFoundException(getErrorMessage(questionId));
-		}
-		return questionOptional.get();
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	private String getErrorMessage(Long id) {
-		return "Test id: " + id + " not found!";
 	}
 }
