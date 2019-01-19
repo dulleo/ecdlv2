@@ -2,7 +2,6 @@ package com.duskol.ecdlv2.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -13,7 +12,7 @@ import com.duskol.ecdlv2.converter.DtoToEntityConverter;
 import com.duskol.ecdlv2.converter.EntityToDtoConverter;
 import com.duskol.ecdlv2.dto.TestDTO;
 import com.duskol.ecdlv2.entity.Test;
-import com.duskol.ecdlv2.error.ErrorCodes;
+import com.duskol.ecdlv2.entity.provider.EntityProviderInterface;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
 import com.duskol.ecdlv2.repository.RepositoryContainer;
 
@@ -24,7 +23,7 @@ import com.duskol.ecdlv2.repository.RepositoryContainer;
  */
 @Service
 @Transactional
-public class TestServiceImpl implements TestService {
+public class TestService implements TestServiceInterface {
 
 	@Autowired
 	private RepositoryContainer repositoryContainer;
@@ -33,7 +32,13 @@ public class TestServiceImpl implements TestService {
 	private EntityToDtoConverter entityToDtoConverter; 
 	
 	@Autowired
-	private DtoToEntityConverter dtoToEntityConverter; 
+	private DtoToEntityConverter dtoToEntityConverter;
+	
+	@Autowired
+	private QuestionServiceInterface questionService;
+	
+	@Autowired
+	private EntityProviderInterface entityProvider;
 	
 	
 	@Override
@@ -71,9 +76,7 @@ public class TestServiceImpl implements TestService {
 	@Override
 	public void update(Long testId, TestDTO testDTO) throws ResourceNotFoundException {
 		
-		Optional<Test> testOptional = getOptionalTest(testId);
-		
-		Test test = testOptional.get();
+		Test test = entityProvider.getTest(testId);
 		dtoToEntityConverter.convert(testDTO, test);
 		repositoryContainer.getTestRepository().save(test);
 	}
@@ -84,31 +87,11 @@ public class TestServiceImpl implements TestService {
 	 */
 	@Override
 	public void delete(Long testId) throws ResourceNotFoundException {
-		Optional<Test> testOptional = getOptionalTest(testId);
-		repositoryContainer.getTestRepository().delete(testOptional.get());
-	}
-	
-	/**
-	 * 
-	 * @param testId
-	 * @return
-	 * @throws ResourceNotFoundException
-	 */
-	private Optional<Test> getOptionalTest(Long testId) throws ResourceNotFoundException {
-		Optional<Test> testOptional = repositoryContainer.getTestRepository().findById(testId);
 		
-		if(!testOptional.isPresent()) {
-			throw new ResourceNotFoundException(getErrorMessage(testId), ErrorCodes.TEST_NOT_FOUND);
-		}
-		return testOptional;
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	private String getErrorMessage(Long id) {
-		return "Test id: " + id + " not found!";
+		Test test = entityProvider.getTest(testId);
+		
+		//before deleting test, you need to delete all questions, because question has reference to the answer
+		questionService.deleteAllQuestionsForTest(testId);
+		repositoryContainer.getTestRepository().delete(test);
 	}
 }
