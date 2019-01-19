@@ -10,7 +10,7 @@ import com.duskol.ecdlv2.exception.ResourceNotFoundException;
  * Cretaed Jan 15, 2019 by duskol
  *
  */
-public interface QuestionService {
+public interface QuestionServiceInterface {
 
 	List<QuestionDTO> getAllQuestions(Long testId) throws ResourceNotFoundException;
 
@@ -21,5 +21,7 @@ public interface QuestionService {
 	void delete(Long testId, Long questionId) throws ResourceNotFoundException;
 
 	QuestionDTO getQuestion(Long testId, Long questionId) throws ResourceNotFoundException;
+
+	void deleteAllQuestionsForTest(Long testId);
 
 }
