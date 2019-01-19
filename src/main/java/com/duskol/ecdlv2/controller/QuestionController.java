@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.duskol.ecdlv2.dto.QuestionDTO;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
-import com.duskol.ecdlv2.service.QuestionService;
+import com.duskol.ecdlv2.service.QuestionServiceInterface;
 
 /**
  * 
@@ -28,7 +28,7 @@ import com.duskol.ecdlv2.service.QuestionService;
 public class QuestionController {
 	
 	@Autowired
-	private QuestionService questionService;
+	private QuestionServiceInterface questionService;
 	
 	@GetMapping("/{testId}/questions")
 	public List<QuestionDTO> getAllQuestions(@PathVariable Long testId) throws ResourceNotFoundException {
