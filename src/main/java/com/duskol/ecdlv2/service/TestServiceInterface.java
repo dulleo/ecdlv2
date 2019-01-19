@@ -10,7 +10,7 @@ import com.duskol.ecdlv2.exception.ResourceNotFoundException;
  * Created by Dusko Lucic on Jan 14, 2019
  *
  */
-public interface TestService {
+public interface TestServiceInterface {
 
 	List<TestDTO> getAll();
 
