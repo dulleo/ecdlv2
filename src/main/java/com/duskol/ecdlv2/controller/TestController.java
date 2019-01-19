@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.duskol.ecdlv2.dto.TestDTO;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
-import com.duskol.ecdlv2.service.TestService;
+import com.duskol.ecdlv2.service.TestServiceInterface;
 
 /**
  * 
@@ -30,7 +30,7 @@ import com.duskol.ecdlv2.service.TestService;
 public class TestController {
 	
 	@Autowired
-	private TestService testService;
+	private TestServiceInterface testService;
 	
 	@GetMapping("/tests")
 	@ResponseStatus(value = HttpStatus.OK)
