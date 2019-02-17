@@ -8,8 +8,8 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.duskol.ecdlv2.converter.DtoToEntityConverter;
-import com.duskol.ecdlv2.converter.EntityToDtoConverter;
+import com.duskol.ecdlv2.converter.DtoToEntityConverterInterface;
+import com.duskol.ecdlv2.converter.EntityToDtoConverterInterface;
 import com.duskol.ecdlv2.dto.AnswerDTO;
 import com.duskol.ecdlv2.dto.QuestionDTO;
 import com.duskol.ecdlv2.entity.Answer;
@@ -32,19 +32,19 @@ public class QuestionService implements QuestionServiceInterface {
 	private RepositoryContainer repositoryContainer;
 	
 	@Autowired
-	private EntityToDtoConverter entityToDtoConverter; 
+	private EntityToDtoConverterInterface entityToDtoConverter; 
 	
 	@Autowired
-	private DtoToEntityConverter dtoToEntityConverter;
+	private DtoToEntityConverterInterface dtoToEntityConverter;
 	
 	@Autowired
 	private EntityProviderInterface entityProvider;
 
 	@Override
-	public List<QuestionDTO> getAllQuestions(Long testId) throws ResourceNotFoundException {
+	public List<QuestionDTO> getTestQuestionDTOs(Long testId) {
 		
-		Test test = entityProvider.getTest(testId);
-		List<Question> questions = repositoryContainer.getQuestionRepository().findByTestId(test.getId());
+		//Test test = entityProvider.getTest(testId);
+		List<Question> questions = repositoryContainer.getQuestionRepository().findByTestId(testId);
 		
 		List<QuestionDTO> questionDTOs = new ArrayList<>();
 		
@@ -52,6 +52,8 @@ public class QuestionService implements QuestionServiceInterface {
 			questions.stream().forEach(question -> {
 				QuestionDTO questionDTO = new QuestionDTO();
 				entityToDtoConverter.convert(question, questionDTO);
+				setAnswerDTOs(question, questionDTO);
+				questionDTOs.add(questionDTO);
 			});
 		}
 		
@@ -105,11 +107,16 @@ public class QuestionService implements QuestionServiceInterface {
 		repositoryContainer.getQuestionRepository().delete(question);
 	}
 	
+	@Override
+	public Integer getTotalQuestions(Long testId) {
+		
+		return repositoryContainer.getQuestionRepository().findByTestId(testId).size();
+	}
+	
 	/**
-	 * Set question answers
+	 * 
 	 * @param questionDTO
 	 * @param question
-	 * @param answers
 	 */
 	private void setAnswers(QuestionDTO questionDTO, Question question) {
 		
@@ -118,9 +125,11 @@ public class QuestionService implements QuestionServiceInterface {
 		questionDTO.getAnswers().stream().forEach(answerDTO -> {
 			Answer answer = new Answer();
 			dtoToEntityConverter.convert(answerDTO, answer);
+			answer.setQuestion(question);
 			answers.add(answer);
 		});
-		question.setAnswers(answers);
+		question.getAnswers().clear();
+		question.getAnswers().addAll(answers);
 	}
 	
 	/**
