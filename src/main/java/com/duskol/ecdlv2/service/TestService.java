@@ -8,8 +8,9 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.duskol.ecdlv2.converter.DtoToEntityConverter;
-import com.duskol.ecdlv2.converter.EntityToDtoConverter;
+import com.duskol.ecdlv2.converter.DtoToEntityConverterInterface;
+import com.duskol.ecdlv2.converter.EntityToDtoConverterInterface;
+import com.duskol.ecdlv2.dto.QuestionDTO;
 import com.duskol.ecdlv2.dto.TestDTO;
 import com.duskol.ecdlv2.entity.Test;
 import com.duskol.ecdlv2.entity.provider.EntityProviderInterface;
@@ -29,10 +30,10 @@ public class TestService implements TestServiceInterface {
 	private RepositoryContainer repositoryContainer;
 	
 	@Autowired
-	private EntityToDtoConverter entityToDtoConverter; 
+	private EntityToDtoConverterInterface entityToDtoConverter; 
 	
 	@Autowired
-	private DtoToEntityConverter dtoToEntityConverter;
+	private DtoToEntityConverterInterface dtoToEntityConverter;
 	
 	@Autowired
 	private QuestionServiceInterface questionService;
@@ -44,19 +45,39 @@ public class TestService implements TestServiceInterface {
 	@Override
 	public List<TestDTO> getAll() {
 		
-		List<Test> tests = repositoryContainer.getTestRepository().findAll();
-		
 		List<TestDTO> testDTOs = new ArrayList<>();
+		
+		List<Test> tests = repositoryContainer.getTestRepository().findAll();
 		
 		if(!tests.isEmpty()) {
 			tests.stream().forEach(test -> {
 				TestDTO testDTO = new TestDTO();
 				entityToDtoConverter.convert(test, testDTO);
+				//List<QuestionDTO> questionDTOs = new ArrayList<>();
+				//questionDTOs = questionService.getTestQuestions(test.getId());
+				//testDTO.setQuestions(questionDTOs);
+				//testDTO.setTotalQuestions(testDTO.getQuestions().size());
+				Integer totalQuestions = questionService.getTotalQuestions(test.getId());
+				testDTO.setTotalQuestions(totalQuestions);
 				testDTOs.add(testDTO);
 			});
 		}
 	
 		return testDTOs;
+	}
+	
+	@Override
+	public TestDTO getTest(Long testId) throws ResourceNotFoundException {
+		Test test = entityProvider.getTest(testId);
+		TestDTO testDTO = new TestDTO();
+		entityToDtoConverter.convert(test, testDTO);
+		List<QuestionDTO> questionDTOs = new ArrayList<>();
+		questionDTOs = questionService.getTestQuestionDTOs(test.getId());
+		testDTO.setQuestions(questionDTOs);
+		testDTO.setTotalQuestions(questionDTOs.size());
+		
+		System.out.println("get test: " + testDTO.toString());
+		return testDTO;
 	}
 
 	/**
@@ -94,4 +115,6 @@ public class TestService implements TestServiceInterface {
 		questionService.deleteAllQuestionsForTest(testId);
 		repositoryContainer.getTestRepository().delete(test);
 	}
+
+	
 }
