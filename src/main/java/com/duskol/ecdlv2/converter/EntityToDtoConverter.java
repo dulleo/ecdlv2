@@ -15,12 +15,16 @@ import com.duskol.ecdlv2.entity.Test;
  *
  */
 @Component
-public class EntityToDtoConverterImpl implements EntityToDtoConverter {
+public class EntityToDtoConverter implements EntityToDtoConverterInterface {
 
 	@Override
 	public void convert(Test test, TestDTO testDTO) {
 		testDTO.setId(test.getId());
 		testDTO.setTitle(test.getTitle());
+		testDTO.setDuration(test.getDuration());
+		testDTO.setPassingLimit(test.getPassingLimit());
+		testDTO.setStatus(test.getStatus());
+		testDTO.setTotalExamQuestions(test.getTotalExamQuestions());
 	}
 
 	@Override
