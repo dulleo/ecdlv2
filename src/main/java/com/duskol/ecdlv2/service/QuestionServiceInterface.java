@@ -12,7 +12,7 @@ import com.duskol.ecdlv2.exception.ResourceNotFoundException;
  */
 public interface QuestionServiceInterface {
 
-	List<QuestionDTO> getAllQuestions(Long testId) throws ResourceNotFoundException;
+	//List<QuestionDTO> getTestQuestions(Long testId);
 
 	void create(Long testId, QuestionDTO questionDTO) throws ResourceNotFoundException;
 
@@ -20,8 +20,12 @@ public interface QuestionServiceInterface {
 
 	void delete(Long testId, Long questionId) throws ResourceNotFoundException;
 
-	QuestionDTO getQuestion(Long testId, Long questionId) throws ResourceNotFoundException;
+	QuestionDTO getQuestion(Long testId, Long questionId) throws ResourceNotFoundException; //da li ovo treba
 
 	void deleteAllQuestionsForTest(Long testId);
+
+	Integer getTotalQuestions(Long id);
+
+	List<QuestionDTO> getTestQuestionDTOs(Long testId);
 
 }
