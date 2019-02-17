@@ -95,4 +95,5 @@ public class Question {
 		return "Question [id=" + id + ", text=" + text + ", type=" + type + ", test=" + test + ", answers=" + answers
 				+ "]";
 	}
+	
 }
