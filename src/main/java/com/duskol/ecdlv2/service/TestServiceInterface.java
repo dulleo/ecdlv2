@@ -20,4 +20,6 @@ public interface TestServiceInterface {
 
 	void delete(Long testId) throws ResourceNotFoundException;
 
+	TestDTO getTest(Long id) throws ResourceNotFoundException;
+
 }
