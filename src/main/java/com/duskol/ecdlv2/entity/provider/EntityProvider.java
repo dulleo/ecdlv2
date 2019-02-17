@@ -41,12 +41,12 @@ public class EntityProvider implements EntityProviderInterface {
 	@Override
 	public Question getQuestion(Long testId, Long questionId) throws ResourceNotFoundException {
 
-		Question question = repositoryContainer.getQuestionRepository().findByIdAndTestId(testId, questionId);
+		Question question = repositoryContainer.getQuestionRepository().findByIdAndTestId(questionId, testId);
 
 		if (question == null) {
 			throw new ResourceNotFoundException("Question not found with id " + questionId + " and testId " + testId);
 		}
-		return null;
+		return question;
 	}
 
 }
