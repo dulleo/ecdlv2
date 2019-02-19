@@ -76,7 +76,6 @@ public class TestService implements TestServiceInterface {
 		testDTO.setQuestions(questionDTOs);
 		testDTO.setTotalQuestions(questionDTOs.size());
 		
-		System.out.println("get test: " + testDTO.toString());
 		return testDTO;
 	}
 
