@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.duskol.ecdlv2.dto.TestDTO;
+import com.duskol.ecdlv2.error.ErrorCodes;
+import com.duskol.ecdlv2.error.ErrorResponse;
+import com.duskol.ecdlv2.exception.DataIntegrityException;
+import com.duskol.ecdlv2.exception.InternalException;
+import com.duskol.ecdlv2.exception.NotFoundException;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
 import com.duskol.ecdlv2.service.TestServiceInterface;
 
@@ -61,6 +67,26 @@ public class TestController {
 	public void deleteTest(@PathVariable Long testId) throws ResourceNotFoundException {
 		testService.delete(testId);
 	}
-
+	
+	@ExceptionHandler(NotFoundException.class)
+	@ResponseStatus(value = HttpStatus.NOT_FOUND)
+	public ErrorResponse getErrorResponse(NotFoundException e) {
+		ErrorCodes errorCode = e.getErrorCode();
+		return new ErrorResponse(errorCode.getCode(), e.getMessage());
+	}
+	
+	@ExceptionHandler(DataIntegrityException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	public ErrorResponse dataIntegrityError(DataIntegrityException e) {
+		ErrorCodes errorCode = e.getErrorCode();
+		return new ErrorResponse(errorCode.getCode(), e.getMessage());
+	}
+	
+	@ExceptionHandler(InternalException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ErrorResponse internalError(InternalException e) {
+		ErrorCodes errorCode = e.getErrorCode();
+		return new ErrorResponse(errorCode.getCode(), e.getMessage());
+	}
 	
 }
