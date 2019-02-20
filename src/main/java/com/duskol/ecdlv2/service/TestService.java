@@ -14,6 +14,7 @@ import com.duskol.ecdlv2.dto.QuestionDTO;
 import com.duskol.ecdlv2.dto.TestDTO;
 import com.duskol.ecdlv2.entity.Test;
 import com.duskol.ecdlv2.entity.provider.EntityProviderInterface;
+import com.duskol.ecdlv2.exception.EntityValidationException;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
 import com.duskol.ecdlv2.repository.RepositoryContainer;
 
@@ -71,8 +72,7 @@ public class TestService implements TestServiceInterface {
 		Test test = entityProvider.getTest(testId);
 		TestDTO testDTO = new TestDTO();
 		entityToDtoConverter.convert(test, testDTO);
-		List<QuestionDTO> questionDTOs = new ArrayList<>();
-		questionDTOs = questionService.getTestQuestionDTOs(test.getId());
+		List<QuestionDTO> questionDTOs = questionService.getTestQuestionDTOs(test.getId());
 		testDTO.setQuestions(questionDTOs);
 		testDTO.setTotalQuestions(questionDTOs.size());
 		
@@ -83,7 +83,7 @@ public class TestService implements TestServiceInterface {
 	 * This method creates a test
 	 */
 	@Override
-	public void save(TestDTO testDTO) {
+	public void createTest(TestDTO testDTO) {
 		Test test = new Test();
 		dtoToEntityConverter.convert(testDTO, test);
 		repositoryContainer.getTestRepository().save(test);
@@ -92,11 +92,12 @@ public class TestService implements TestServiceInterface {
 	/**
 	 * This method updates test
 	 * @throws ResourceNotFoundException 
+	 * @throws EntityValidationException 
 	 */
 	@Override
-	public void update(Long testId, TestDTO testDTO) throws ResourceNotFoundException {
+	public void updateTest(Long testId, TestDTO testDTO) throws ResourceNotFoundException, EntityValidationException {
 		
-		Test test = entityProvider.getTest(testId);
+		Test test = entityProvider.getTest(testId, testDTO);
 		dtoToEntityConverter.convert(testDTO, test);
 		repositoryContainer.getTestRepository().save(test);
 	}
@@ -106,7 +107,7 @@ public class TestService implements TestServiceInterface {
 	 * @throws ResourceNotFoundException 
 	 */
 	@Override
-	public void delete(Long testId) throws ResourceNotFoundException {
+	public void deleteTest(Long testId) throws ResourceNotFoundException {
 		
 		Test test = entityProvider.getTest(testId);
 		
