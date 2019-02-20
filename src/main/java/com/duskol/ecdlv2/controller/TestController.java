@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +20,7 @@ import com.duskol.ecdlv2.dto.TestDTO;
 import com.duskol.ecdlv2.error.ErrorCodes;
 import com.duskol.ecdlv2.error.ErrorResponse;
 import com.duskol.ecdlv2.exception.DataIntegrityException;
+import com.duskol.ecdlv2.exception.EntityValidationException;
 import com.duskol.ecdlv2.exception.InternalException;
 import com.duskol.ecdlv2.exception.NotFoundException;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
@@ -55,19 +55,19 @@ public class TestController {
 	@RequestMapping(value="/ecdl/tests", method= RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public void createTest(@Valid @RequestBody TestDTO testDTO) {
-		testService.save(testDTO);
+		testService.createTest(testDTO);
 	}
 	
-	@PutMapping("/tests/{testId}")
+	@RequestMapping(value="/ecdl/tests/{testId}", method= RequestMethod.PUT, consumes=MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(value = HttpStatus.OK)
-	public void updateTest(@PathVariable Long testId, @Valid @RequestBody TestDTO testDTO) throws ResourceNotFoundException {
-		testService.update(testId,testDTO);
+	public void updateTest(@PathVariable Long testId, @Valid @RequestBody TestDTO testDTO) throws ResourceNotFoundException, EntityValidationException {
+		testService.updateTest(testId,testDTO);
 	}
 	
 	@DeleteMapping("/tests/{testId}")
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void deleteTest(@PathVariable Long testId) throws ResourceNotFoundException {
-		testService.delete(testId);
+		testService.deleteTest(testId);
 	}
 	
 	@ExceptionHandler(NotFoundException.class)
