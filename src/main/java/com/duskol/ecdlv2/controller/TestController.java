@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,7 @@ import com.duskol.ecdlv2.exception.DataIntegrityException;
 import com.duskol.ecdlv2.exception.InternalException;
 import com.duskol.ecdlv2.exception.NotFoundException;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
+import com.duskol.ecdlv2.exception.ValidationException;
 import com.duskol.ecdlv2.service.TestServiceInterface;
 
 /**
@@ -50,7 +52,7 @@ public class TestController {
 		return testService.getTest(id);
 	}
 	
-	@RequestMapping(value="/ecdl/tests", method= RequestMethod.POST)
+	@RequestMapping(value="/ecdl/tests", method= RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public void createTest(@Valid @RequestBody TestDTO testDTO) {
 		testService.save(testDTO);
@@ -75,16 +77,23 @@ public class TestController {
 		return new ErrorResponse(errorCode.getCode(), e.getMessage());
 	}
 	
+	@ExceptionHandler(ValidationException.class)
+	@ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
+	public ErrorResponse getErrorResponse(ValidationException e) {
+		ErrorCodes errorCode = e.getErrorCode();
+		return new ErrorResponse(errorCode.getCode(), e.getMessage());
+	}
+	
 	@ExceptionHandler(DataIntegrityException.class)
 	@ResponseStatus(HttpStatus.CONFLICT)
-	public ErrorResponse dataIntegrityError(DataIntegrityException e) {
+	public ErrorResponse getErrorResponse(DataIntegrityException e) {
 		ErrorCodes errorCode = e.getErrorCode();
 		return new ErrorResponse(errorCode.getCode(), e.getMessage());
 	}
 	
 	@ExceptionHandler(InternalException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public ErrorResponse internalError(InternalException e) {
+	public ErrorResponse getErrorResponse(InternalException e) {
 		ErrorCodes errorCode = e.getErrorCode();
 		return new ErrorResponse(errorCode.getCode(), e.getMessage());
 	}
