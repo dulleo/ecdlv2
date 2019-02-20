@@ -64,7 +64,7 @@ public class TestController {
 		testService.updateTest(testId,testDTO);
 	}
 	
-	@DeleteMapping("/tests/{testId}")
+	@RequestMapping(value="/ecdl/tests/{testId}", method= RequestMethod.DELETE)
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void deleteTest(@PathVariable Long testId) throws ResourceNotFoundException {
 		testService.deleteTest(testId);
