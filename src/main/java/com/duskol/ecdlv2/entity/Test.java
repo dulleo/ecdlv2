@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.duskol.ecdlv2.common.TestStatus;
 
@@ -31,9 +32,11 @@ public class Test {
 	@Column(name="title")
 	private String title;
 	
+	@NotNull
 	@Column(name="duration")
 	private Integer duration;
 	
+	@NotNull
 	@Column(name="passing_limit")
 	private BigDecimal passingLimit;
 	
@@ -41,6 +44,7 @@ public class Test {
 	@Column(name="status")
 	private TestStatus status;
 	
+	@NotNull
 	@Column(name="total_exam_questions")
 	private Integer totalExamQuestions;
 
