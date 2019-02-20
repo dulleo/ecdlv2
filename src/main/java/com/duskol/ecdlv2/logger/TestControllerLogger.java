@@ -121,6 +121,26 @@ public class TestControllerLogger {
 		}
 	}
 	
+	@Pointcut("void com.duskol.ecdlv2.controller.TestController.deleteTest(Long)) "
+			+ "&& args(testId)")
+	public void deleteTestPointcut(Long testId) { }
+	
+	@Around("deleteTestPointcut(testId)")
+	public void deleteTest(ProceedingJoinPoint jp, Long testId) throws Throwable {
+		
+		try {
+			jp.proceed();
+		} catch (ResourceNotFoundException e) {
+			getNotFoundError(e, ErrorCodes.TEST_CAN_NOT_BE_DELETED, commonLogger.getMethodName());
+		} catch (DataIntegrityViolationException e) {
+			getDataIntegrityViolationError(e, ErrorCodes.TEST_CAN_NOT_BE_DELETED, commonLogger.getMethodName());
+		} catch (DataAccessException e) {
+			getDataAccessError(e, ErrorCodes.TEST_CAN_NOT_BE_DELETED, commonLogger.getMethodName());
+		} catch (Exception e) {
+			getInternalError(e, ErrorCodes.TEST_CAN_NOT_BE_DELETED, commonLogger.getMethodName());
+		}
+	}
+	
 	/**
 	 * 
 	 * @param e
