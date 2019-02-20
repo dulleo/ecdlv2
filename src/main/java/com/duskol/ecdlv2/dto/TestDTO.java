@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * Created by Dusko Lucic on Jan 14, 2019
  *
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TestDTO implements Serializable {
 	
 	private static final long serialVersionUID = 7845177678739909979L;
@@ -23,7 +24,6 @@ public class TestDTO implements Serializable {
 	private TestStatus status;
 	private Integer totalExamQuestions;
 	private Integer totalQuestions;
-	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private List<QuestionDTO> questions;
 	
 	public Long getId() {
@@ -76,7 +76,7 @@ public class TestDTO implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "\nTestDTO [id=" + id + ", title=" + title + ", duration=" + duration + ", passingLimit=" + passingLimit
+		return "TestDTO [id=" + id + ", title=" + title + ", duration=" + duration + ", passingLimit=" + passingLimit
 				+ ", status=" + status + ", totalExamQuestions=" + totalExamQuestions + ", totalQuestions="
 				+ totalQuestions + ", questions=" + questions + "]";
 	}
