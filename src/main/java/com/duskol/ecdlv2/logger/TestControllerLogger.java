@@ -2,6 +2,8 @@ package com.duskol.ecdlv2.logger;
 
 import java.util.List;
 
+import javax.validation.ConstraintViolationException;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,6 +22,7 @@ import com.duskol.ecdlv2.exception.DataIntegrityException;
 import com.duskol.ecdlv2.exception.InternalException;
 import com.duskol.ecdlv2.exception.NotFoundException;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
+import com.duskol.ecdlv2.exception.ValidationException;
 
 @Aspect
 @Component
@@ -73,6 +76,38 @@ public class TestControllerLogger {
 		return result;
 	}
 	
+	@Pointcut("execution(void com.duskol.ecdlv2.controller.TestController.createTest(com.duskol.ecdlv2.dto.TestDTO)) "
+			+ "&& args(testDTO)")
+	public void createTestPointcut(TestDTO testDTO) { }
+	
+	@Around("createTestPointcut(testDTO)")
+	public void createTest(ProceedingJoinPoint jp, TestDTO testDTO) throws Throwable {
+		
+		try {
+			jp.proceed();
+		} catch (ConstraintViolationException e) {
+			getConstraintViolationError(e, ErrorCodes.TEST_CAN_NOT_BE_CREATED, commonLogger.getMethodName());
+		} catch (DataIntegrityViolationException e) {
+			getDataIntegrityViolationError(e, ErrorCodes.TEST_CAN_NOT_BE_CREATED, commonLogger.getMethodName());
+		} catch (DataAccessException e) {
+			getDataAccessError(e, ErrorCodes.TEST_CAN_NOT_BE_CREATED, commonLogger.getMethodName());
+		} catch (Exception e) {
+			getInternalError(e, ErrorCodes.TEST_CAN_NOT_BE_CREATED, commonLogger.getMethodName());
+		}
+	}
+	
+	/**
+	 * 
+	 * @param e
+	 * @param testCanNotBeProvided
+	 * @param methodName
+	 * @throws ValidationException 
+	 */
+	private void getConstraintViolationError(ConstraintViolationException e, ErrorCodes errorCode, String methodName) throws ValidationException {
+		LOGGER.error(MESSAGE_FORMAT_ERROR, methodName, e.getMessage(),e);
+		throw new ValidationException(e.getMessage(), errorCode);
+	}
+
 	/**
 	 * 
 	 * @param e
@@ -80,9 +115,9 @@ public class TestControllerLogger {
 	 * @param methodName
 	 * @throws NotFoundException
 	 */
-	private void getNotFoundError(Exception e, ErrorCodes errorCodes, String methodName) throws NotFoundException {
+	private void getNotFoundError(Exception e, ErrorCodes errorCode, String methodName) throws NotFoundException {
 		LOGGER.error(MESSAGE_FORMAT_ERROR, methodName, e.getMessage(),e);
-		throw new NotFoundException(e.getMessage(), errorCodes);
+		throw new NotFoundException(e.getMessage(), errorCode);
 	}
 	
 	/**
@@ -92,8 +127,8 @@ public class TestControllerLogger {
 	 * @param methodName
 	 * @throws DataIntegrityException
 	 */
-	private void getDataIntegrityViolationError(DataIntegrityViolationException e, ErrorCodes errorCodes, String methodName) throws DataIntegrityException {
-		generateError(e, errorCodes, methodName);    
+	private void getDataIntegrityViolationError(DataIntegrityViolationException e, ErrorCodes errorCode, String methodName) throws DataIntegrityException {
+		generateError(e, errorCode, methodName);    
 	}
 	
 	/**
@@ -103,8 +138,8 @@ public class TestControllerLogger {
 	 * @param methodName
 	 * @throws DataIntegrityException
 	 */
-	private void getDataAccessError(DataAccessException e, ErrorCodes errorCodes, String methodName) throws DataIntegrityException {
-		generateError(e, errorCodes, methodName); 
+	private void getDataAccessError(DataAccessException e, ErrorCodes errorCode, String methodName) throws DataIntegrityException {
+		generateError(e, errorCode, methodName); 
 	}
 	
 	/**
@@ -114,15 +149,15 @@ public class TestControllerLogger {
 	 * @param methodName
 	 * @throws DataIntegrityException
 	 */
-	private void generateError(Exception e, ErrorCodes errorCodes, String methodName) throws DataIntegrityException {
+	private void generateError(Exception e, ErrorCodes errorCode, String methodName) throws DataIntegrityException {
 		if(e.getCause() instanceof JDBCException && ((JDBCException)e.getCause()).getSQLException() != null)
         {                    
 			String message = ((JDBCException)e.getCause()).getSQLException().getMessage();
 			LOGGER.error(MESSAGE_FORMAT_ERROR,methodName,message,e);
-            throw new DataIntegrityException(message, errorCodes);
+            throw new DataIntegrityException(message, errorCode);
         } else {
         	LOGGER.error(MESSAGE_FORMAT_ERROR,methodName,e.getMessage(), e);
-            throw new DataIntegrityException(e.getMessage(), errorCodes); 
+            throw new DataIntegrityException(e.getMessage(), errorCode); 
         }
 	}
 	
@@ -133,8 +168,8 @@ public class TestControllerLogger {
 	 * @param methodName
 	 * @throws InternalException
 	 */
-	private void getInternalError(Exception e, ErrorCodes errorCodes, String methodName) throws InternalException {
+	private void getInternalError(Exception e, ErrorCodes errorCode, String methodName) throws InternalException {
 		LOGGER.error(MESSAGE_FORMAT_ERROR, methodName, e.getMessage(), e);
-		throw new InternalException(e.getMessage(), errorCodes);
+		throw new InternalException(e.getMessage(), errorCode);
 	}
 }
