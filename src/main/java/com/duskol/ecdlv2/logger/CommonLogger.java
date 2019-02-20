@@ -25,7 +25,7 @@ public class CommonLogger {
 		LOGGER.info("[METHOD TYPE]: {}", mapping.method()[0]);
 		LOGGER.info("[URL]: {}", mapping.value()[0]);
 		if(jp.getArgs().length != 0) {
-			LOGGER.info("[Args]: {}",Arrays.toString(jp.getArgs()));
+			LOGGER.info("[Args]: \n{}",Arrays.toString(jp.getArgs()));
 		}
 	}
 
