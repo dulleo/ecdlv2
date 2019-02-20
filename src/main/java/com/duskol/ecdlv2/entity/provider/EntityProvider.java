@@ -5,8 +5,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.duskol.ecdlv2.dto.TestDTO;
 import com.duskol.ecdlv2.entity.Question;
 import com.duskol.ecdlv2.entity.Test;
+import com.duskol.ecdlv2.exception.EntityValidationException;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
 import com.duskol.ecdlv2.repository.RepositoryContainer;
 
@@ -37,6 +39,16 @@ public class EntityProvider implements EntityProviderInterface {
 		}
 		return testOptional.get();
 	}
+	
+	@Override
+	public Test getTest(Long testId, TestDTO testDTO) throws EntityValidationException, ResourceNotFoundException {
+		
+		if(testId.longValue() != testDTO.getId().longValue()) {
+			throw new EntityValidationException("Test id from url: " + testId + " and from dto object: " + testDTO.getId() + ", are not the same!");
+		}
+		
+		return this.getTest(testId);
+	}
 
 	@Override
 	public Question getQuestion(Long testId, Long questionId) throws ResourceNotFoundException {
@@ -48,5 +60,7 @@ public class EntityProvider implements EntityProviderInterface {
 		}
 		return question;
 	}
+
+	
 
 }
