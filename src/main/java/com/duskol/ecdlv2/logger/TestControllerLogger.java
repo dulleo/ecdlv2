@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import com.duskol.ecdlv2.dto.TestDTO;
 import com.duskol.ecdlv2.error.ErrorCodes;
 import com.duskol.ecdlv2.exception.DataIntegrityException;
+import com.duskol.ecdlv2.exception.EntityValidationException;
 import com.duskol.ecdlv2.exception.InternalException;
 import com.duskol.ecdlv2.exception.NotFoundException;
 import com.duskol.ecdlv2.exception.ResourceNotFoundException;
@@ -96,6 +97,30 @@ public class TestControllerLogger {
 		}
 	}
 	
+	@Pointcut("execution(void com.duskol.ecdlv2.controller.TestController.updateTest(Long, com.duskol.ecdlv2.dto.TestDTO)) "
+			+ "&& args(testId,testDTO)")
+	public void updateTestPointcut(Long testId, TestDTO testDTO) { }
+	
+	@Around("updateTestPointcut(testId, testDTO)")
+	public void updateTest(ProceedingJoinPoint jp, Long testId, TestDTO testDTO) throws Throwable {
+		
+		try {
+			jp.proceed();
+		} catch (ResourceNotFoundException e) {
+			getNotFoundError(e, ErrorCodes.TEST_CAN_NOT_BE_PROVIDED, commonLogger.getMethodName());
+		} catch (EntityValidationException e) {
+			getConstraintViolationError(e, ErrorCodes.TEST_CAN_NOT_BE_UPDATED, commonLogger.getMethodName());
+		} catch (ConstraintViolationException e) {
+			getConstraintViolationError(e, ErrorCodes.TEST_CAN_NOT_BE_UPDATED, commonLogger.getMethodName());
+		} catch (DataIntegrityViolationException e) {
+			getDataIntegrityViolationError(e, ErrorCodes.TEST_CAN_NOT_BE_UPDATED, commonLogger.getMethodName());
+		} catch (DataAccessException e) {
+			getDataAccessError(e, ErrorCodes.TEST_CAN_NOT_BE_UPDATED, commonLogger.getMethodName());
+		} catch (Exception e) {
+			getInternalError(e, ErrorCodes.TEST_CAN_NOT_BE_UPDATED, commonLogger.getMethodName());
+		}
+	}
+	
 	/**
 	 * 
 	 * @param e
@@ -103,7 +128,7 @@ public class TestControllerLogger {
 	 * @param methodName
 	 * @throws ValidationException 
 	 */
-	private void getConstraintViolationError(ConstraintViolationException e, ErrorCodes errorCode, String methodName) throws ValidationException {
+	private void getConstraintViolationError(Exception e, ErrorCodes errorCode, String methodName) throws ValidationException {
 		LOGGER.error(MESSAGE_FORMAT_ERROR, methodName, e.getMessage(),e);
 		throw new ValidationException(e.getMessage(), errorCode);
 	}
