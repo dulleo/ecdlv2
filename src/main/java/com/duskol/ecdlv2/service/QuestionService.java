@@ -73,7 +73,7 @@ public class QuestionService implements QuestionServiceInterface {
 	}
 
 	@Override
-	public void create(Long testId, QuestionDTO questionDTO) throws ResourceNotFoundException {
+	public void createQuestion(Long testId, QuestionDTO questionDTO) throws ResourceNotFoundException {
 		
 		Test test = entityProvider.getTest(testId);
 		Question question = new Question();

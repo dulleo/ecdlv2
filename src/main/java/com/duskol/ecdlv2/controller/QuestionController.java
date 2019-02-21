@@ -29,7 +29,7 @@ public class QuestionController {
 	
 	@RequestMapping(value="/ecdl/tests/{testId}/questions", method= RequestMethod.POST)
 	public void createQuestion(@PathVariable Long testId, @Valid @RequestBody QuestionDTO questionDTO) throws ResourceNotFoundException {
-		questionService.create(testId, questionDTO);
+		questionService.createQuestion(testId, questionDTO);
 	}
 	
 	@RequestMapping(value="/ecdl/tests/{testId}/questions/{questionId}", method= RequestMethod.PUT)
