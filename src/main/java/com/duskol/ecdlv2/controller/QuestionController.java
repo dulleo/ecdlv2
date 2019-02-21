@@ -34,7 +34,7 @@ public class QuestionController {
 	
 	@RequestMapping(value="/ecdl/tests/{testId}/questions/{questionId}", method= RequestMethod.PUT)
 	public void updateQuestion(@PathVariable Long testId, @PathVariable Long questionId, @Valid @RequestBody QuestionDTO questionDTO) throws ResourceNotFoundException {
-		questionService.update(testId, questionId, questionDTO);
+		questionService.updateQuestion(testId, questionId, questionDTO);
 	}
 	
 	@RequestMapping(value="/ecdl/tests/{testId}/questions/{questionId}", method= RequestMethod.DELETE)

@@ -84,7 +84,7 @@ public class QuestionService implements QuestionServiceInterface {
 	}
 
 	@Override
-	public void update(Long testId, Long questionId, QuestionDTO questionDTO) throws ResourceNotFoundException {
+	public void updateQuestion(Long testId, Long questionId, QuestionDTO questionDTO) throws ResourceNotFoundException {
 		
 		Question question = entityProvider.getQuestion(testId, questionId);
 		
