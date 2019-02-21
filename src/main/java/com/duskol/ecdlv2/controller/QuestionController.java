@@ -39,6 +39,6 @@ public class QuestionController {
 	
 	@RequestMapping(value="/ecdl/tests/{testId}/questions/{questionId}", method= RequestMethod.DELETE)
 	public void deleteQuestion(@PathVariable Long testId, @PathVariable Long questionId) throws ResourceNotFoundException {
-		questionService.delete(testId, questionId);
+		questionService.deleteQuestion(testId, questionId);
 	}
 }

@@ -101,7 +101,7 @@ public class QuestionService implements QuestionServiceInterface {
 	}
 	
 	@Override
-	public void delete(Long testId, Long questionId) throws ResourceNotFoundException {
+	public void deleteQuestion(Long testId, Long questionId) throws ResourceNotFoundException {
 		
 		Question question = entityProvider.getQuestion(testId, questionId);
 		repositoryContainer.getQuestionRepository().delete(question);

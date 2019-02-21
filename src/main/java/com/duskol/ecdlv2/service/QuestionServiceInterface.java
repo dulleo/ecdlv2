@@ -18,7 +18,7 @@ public interface QuestionServiceInterface {
 
 	void updateQuestion(Long testId, Long questionId, QuestionDTO questionDTO) throws ResourceNotFoundException;
 
-	void delete(Long testId, Long questionId) throws ResourceNotFoundException;
+	void deleteQuestion(Long testId, Long questionId) throws ResourceNotFoundException;
 
 	QuestionDTO getQuestion(Long testId, Long questionId) throws ResourceNotFoundException; //da li ovo treba
 
