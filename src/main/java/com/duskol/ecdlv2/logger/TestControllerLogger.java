@@ -121,7 +121,7 @@ public class TestControllerLogger {
 		}
 	}
 	
-	@Pointcut("void com.duskol.ecdlv2.controller.TestController.deleteTest(Long)) "
+	@Pointcut("execution(void com.duskol.ecdlv2.controller.TestController.deleteTest(Long)) "
 			+ "&& args(testId)")
 	public void deleteTestPointcut(Long testId) { }
 	
